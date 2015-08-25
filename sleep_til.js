@@ -197,6 +197,9 @@ function human_readable_time(t)
 }
 
 console.log("Waiting for about " + human_readable_time(start) + ".");
+if (typeof stop === "number") {
+    console.log("Stopping about " + human_readable_time(stop) + " after that.");
+}
 
 if (typeof stop !== "number") {
     after_wait = function () {};
