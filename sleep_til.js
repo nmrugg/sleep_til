@@ -14,17 +14,11 @@ function run_program()
         args = [],
         exce;
     
-    function onerr(e)
-    {
-        console.log("Error detected:");
-        console.log(e);
-    }
-    
     for (i = 4; i < len; i += 1) {
         args.push(process.argv[i]);
     }
     
-    exce = spawn(program, args, {stdio: [0, 1, 2], cwd: process.cwd(), env: process.env}).on("error", onerr)/*.on("close", onclose)*/;
+    exce = spawn(program, args, {stdio: [0, 1, 2], cwd: process.cwd(), env: process.env});
     
     setTimeout(function after_final_wait()
     {
