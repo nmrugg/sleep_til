@@ -111,7 +111,7 @@ function get_from_time(t, start_from)
 
 function help()
 {
-    console.log("Usage: sleep_til TIME[-TIME PROGRAM args1 ... argsN]");
+    console.log("Usage: sleep_til TIME[-TIME[-r] PROGRAM args1 ... argsN]");
     console.log("");
     console.log("  TIME can be the following:");
     console.log("  A timestamp:");
@@ -136,6 +136,13 @@ function help()
     console.log("");
     console.log("  If you don't specifiy a range, you will want to chain this with another program, like this:");
     console.log("    sleep_til 5minutes; wget ...");
+    console.log("");
+    console.log("Repeated tasks:");
+    console.log("  If the time range ends with -r or -repeat, it will retry to run the process until it exists without an error.");
+    console.log("  If the program does not exit at all, it will sleep again for the specified times.");
+    console.log("  If the program exists with an error, it will pause momentarily and rerun the program.");
+    console.log("  Here's an example to download a file over night and continue the next day if it does not finish:");
+    console.log("    11:00PM-6:00AM-r wget -c http://example.com/largefile.zip");
     console.log("");
     console.log("NOTE: When using a timestamp, it will use the current time's second value if not specified.");
     console.log("NOTE: The maximum time to wait is about 24 days.");
