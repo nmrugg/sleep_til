@@ -160,10 +160,10 @@ get_times(til);
 ///NOTE: 2147483648 will overflow and be the same as 0.
 ///      2147483647 will not; however, doing any thing close to 2147483647 still make node use a significant amount of CPU for some mysterious reason.
 if (start > 2147400000) {
-    return console.log("Too long, sorry.");
+    return console.error("Too long, sorry.");
 }
 if (typeof stop === "number" &&  stop > 2147400000) {
-    return console.log("End time too long, sorry.");
+    return console.error("End time too long, sorry.");
 }
 
 function human_readable_time(t)
@@ -198,7 +198,13 @@ function human_readable_time(t)
 
 console.log("Waiting for about " + human_readable_time(start) + ".");
 if (typeof stop === "number") {
+    if (typeof process.argv[3] === "undefined") {
+        return console.error("ERROR: A range needs a program to execute.");
+    }
     console.log("Stopping about " + human_readable_time(stop) + " after that.");
+    if (repeat_it) {
+        console.log("Repeating until process exists properly.");
+    }
 }
 
 if (typeof stop !== "number") {
