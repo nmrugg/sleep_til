@@ -4,6 +4,7 @@ var til = process.argv[2];
 var start;
 var stop;
 var after_wait;
+var repeat_it;
 
 function run_program()
 {
@@ -12,17 +13,57 @@ function run_program()
         len = process.argv.length,
         program = process.argv[3],
         args = [],
-        exce;
+        exec,
+        run_it,
+        retry_delay;
+    
+    function onerror(e)
+    {
+        console.error("Error detected:");
+        console.error(e);
+        console.log("Waiting to retry...");
+        retry_delay = setTimeout(function ()
+        {
+            console.log("Rerunning process.");
+            run_it();
+        }, 1000);
+    }
+    
+    function onclose(code)
+    {
+        if (code) {
+            onerror(new Error("Error code: " + code));
+        }
+    }
     
     for (i = 4; i < len; i += 1) {
         args.push(process.argv[i]);
     }
     
-    exce = spawn(program, args, {stdio: [0, 1, 2], cwd: process.cwd(), env: process.env});
+    run_it = function ()
+    {
+        exec = spawn(program, args, {stdio: [0, 1, 2], cwd: process.cwd(), env: process.env});
+        
+        if (repeat_it) {
+            exec.on("error", onerror);
+            exec.on("close", onclose);
+        }
+    };
+    
+    run_it();
     
     setTimeout(function after_final_wait()
     {
-        exce.kill("SIGTERM"); /// SIGTERM is sent by default, by why not specify it.
+        clearTimeout(retry_delay);
+        exec.kill("SIGTERM"); /// SIGTERM is sent by default, by why not specify it.
+        
+        if (repeat_it) {
+            /// Reset the values.
+            start     = undefined;
+            stop      = undefined;
+            repeat_it = undefined;
+            wait();
+        }
     }, stop).unref(); /// unref() it because we don't need to stop it if it stops before the time.
 }
 
@@ -100,21 +141,6 @@ function help()
     console.log("NOTE: The maximum time to wait is about 24 days.");
 }
 
-if (!til) {
-    console.error("Need a time.");
-    return help();
-}
-
-til = til.toLowerCase();
-
-til = til.replace(/\bnoon\b/g, "12:00pm");
-til = til.replace(/\bmidnight\b/g, "12:00am");
-
-til = til.replace(/(\d)days?$/, "$1d");
-til = til.replace(/(\d)hours?$/, "$1h");
-til = til.replace(/(\d)min(?:ute)?s?$/, "$1m");
-til = til.replace(/(\d)sec(?:ond)?s?$/, "$1s");
-
 function parse_time(til, start_from)
 {
     var last = til.slice(-1).toLowerCase(),
@@ -162,17 +188,6 @@ function get_times(til)
     }
 }
 
-get_times(til);
-
-///NOTE: 2147483648 will overflow and be the same as 0.
-///      2147483647 will not; however, doing any thing close to 2147483647 still make node use a significant amount of CPU for some mysterious reason.
-if (start > 2147400000) {
-    return console.error("Too long, sorry.");
-}
-if (typeof stop === "number" &&  stop > 2147400000) {
-    return console.error("End time too long, sorry.");
-}
-
 function human_readable_time(t)
 {
     var unit;
@@ -203,28 +218,61 @@ function human_readable_time(t)
     return t + " " + unit + (t === 1 ? "" : "s");
 }
 
-if (isNaN(start)) {
-    if (!/--?help/.test(til)) {
-        console.error("Invalid time");
+function wait()
+{
+    get_times(til);
+    
+    ///NOTE: 2147483648 will overflow and be the same as 0.
+    ///      2147483647 will not; however, doing any thing close to 2147483647 still make node use a significant amount of CPU for some mysterious reason.
+    if (start > 2147400000) {
+        return console.error("Too long, sorry.");
     }
+    if (typeof stop === "number" &&  stop > 2147400000) {
+        return console.error("End time too long, sorry.");
+    }
+    
+    if (isNaN(start)) {
+        if (!/--?help/.test(til)) {
+            console.error("Invalid time");
+        }
+        return help();
+    }
+    
+    console.log("Waiting for about " + human_readable_time(start) + ".");
+    if (typeof stop === "number") {
+        if (typeof process.argv[3] === "undefined") {
+            return console.error("ERROR: A range needs a program to execute.");
+        }
+        console.log("Stopping about " + human_readable_time(stop) + " after that.");
+        if (repeat_it) {
+            console.log("Repeating until process exists properly.");
+        }
+    }
+    
+    if (typeof stop !== "number") {
+        after_wait = function () {};
+    } else {
+        after_wait = run_program;
+    }
+    
+    setTimeout(after_wait, start);
+}
+
+
+/// Prep
+if (!til) {
+    console.error("Need a time.");
     return help();
 }
 
-console.log("Waiting for about " + human_readable_time(start) + ".");
-if (typeof stop === "number") {
-    if (typeof process.argv[3] === "undefined") {
-        return console.error("ERROR: A range needs a program to execute.");
-    }
-    console.log("Stopping about " + human_readable_time(stop) + " after that.");
-    if (repeat_it) {
-        console.log("Repeating until process exists properly.");
-    }
-}
+til = til.toLowerCase();
 
-if (typeof stop !== "number") {
-    after_wait = function () {};
-} else {
-    after_wait = run_program;
-}
+til = til.replace(/\bnoon\b/g, "12:00pm");
+til = til.replace(/\bmidnight\b/g, "12:00am");
 
-setTimeout(after_wait, start);
+til = til.replace(/(\d)days?$/, "$1d");
+til = til.replace(/(\d)hours?$/, "$1h");
+til = til.replace(/(\d)min(?:ute)?s?$/, "$1m");
+til = til.replace(/(\d)sec(?:ond)?s?$/, "$1s");
+
+wait();
