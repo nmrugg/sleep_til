@@ -131,7 +131,7 @@ function help()
     console.log("     3days  (days)");
     console.log("");
     console.log("  If a range is specified, it will execute a program for the specified amount of time:");
-    console.log("    11:00PM-6:00AM wget -c http://example.com/largefile.zip");
+    console.log("    sleep_til 11:00PM-6:00AM wget -c http://example.com/largefile.zip");
     console.log("  (This will run \"wget\" (with the following args) from 11:00PM to 6:00AM)");
     console.log("");
     console.log("  If you don't specifiy a range, you will want to chain this with another program, like this:");
@@ -142,7 +142,7 @@ function help()
     console.log("  If the program does not exit at all, it will sleep again for the specified times.");
     console.log("  If the program exists with an error, it will pause momentarily and rerun the program.");
     console.log("  Here's an example to download a file over night and continue the next day if it does not finish:");
-    console.log("    11:00PM-6:00AM-r wget -c http://example.com/largefile.zip");
+    console.log("    sleep_til 11:00PM-6:00AM-r wget -c http://example.com/largefile.zip");
     console.log("");
     console.log("NOTE: When using a timestamp, it will use the current time's second value if not specified.");
     console.log("NOTE: The maximum time to wait is about 24 days.");
