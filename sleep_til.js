@@ -68,9 +68,8 @@ function get_from_time(t, start_from)
     }
 }
 
-if (!til) {
-    console.log("Need a time.");
-    console.log("");
+function help()
+{
     console.log("Usage: sleep_til TIME[-TIME PROGRAM args1 ... argsN]");
     console.log("");
     console.log("  TIME can be the following:");
@@ -99,7 +98,11 @@ if (!til) {
     console.log("");
     console.log("NOTE: When using a timestamp, it will use the current time's second value if not specified.");
     console.log("NOTE: The maximum time to wait is about 24 days.");
-    return;
+}
+
+if (!til) {
+    console.error("Need a time.");
+    return help();
 }
 
 til = til.toLowerCase();
@@ -152,6 +155,10 @@ function get_times(til)
         ///      1s-1s would be the same, but
         ///      11:00AM-10:00AM would be 11:00AM one day and 10:00AM the next day.
         stop = parse_time(parts[1], new Date().valueOf() + start);
+        
+        if (parts[2] === "r" || parts[2] === "repeat") {
+            repeat_it = true;
+        }
     }
 }
 
@@ -194,6 +201,13 @@ function human_readable_time(t)
     t = Math.round(t);
     
     return t + " " + unit + (t === 1 ? "" : "s");
+}
+
+if (isNaN(start)) {
+    if (!/--?help/.test(til)) {
+        console.error("Invalid time");
+    }
+    return help();
 }
 
 console.log("Waiting for about " + human_readable_time(start) + ".");
