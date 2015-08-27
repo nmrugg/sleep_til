@@ -93,7 +93,7 @@ function get_from_time(t, start_from)
         }
         
         /// 12 hour
-        if (match[4] && match[4].toLowerCase() === "pm") {
+        if (match[4] && h < 13 && match[4].toLowerCase() === "pm") {
             h += 12;
         }
         
