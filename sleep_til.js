@@ -15,18 +15,29 @@ function run_program()
         args = [],
         exec,
         run_it,
-        retry_delay;
+        retry_delay,
+        stopping;
+    
+    function reset()
+    {
+        stopping  = undefined;
+        start     = undefined;
+        stop      = undefined;
+        repeat_it = undefined;
+    }
     
     function onerror(e)
     {
-        console.error("Error detected:");
-        console.error(e);
-        console.log("Waiting to retry...");
-        retry_delay = setTimeout(function ()
-        {
-            console.log("Rerunning process.");
-            run_it();
-        }, 1000);
+        if (!stopping) {
+            console.error("Error detected:");
+            console.error(e);
+            console.log("Waiting to retry...");
+            retry_delay = setTimeout(function ()
+            {
+                console.log("Rerunning process.");
+                run_it();
+            }, 1000);
+        }
     }
     
     function onclose(code)
@@ -54,14 +65,12 @@ function run_program()
     
     setTimeout(function after_final_wait()
     {
+        stopping = true;
         clearTimeout(retry_delay);
         exec.kill(); /// SIGTERM is sent by default.
         
         if (repeat_it) {
-            /// Reset the values.
-            start     = undefined;
-            stop      = undefined;
-            repeat_it = undefined;
+            reset();
             wait();
         }
     }, stop).unref(); /// unref() it because we don't need to stop it if it stops before the time.
