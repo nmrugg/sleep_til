@@ -55,7 +55,7 @@ function run_program()
     setTimeout(function after_final_wait()
     {
         clearTimeout(retry_delay);
-        exec.kill("SIGTERM"); /// SIGTERM is sent by default, by why not specify it.
+        exec.kill(); /// SIGTERM is sent by default.
         
         if (repeat_it) {
             /// Reset the values.
