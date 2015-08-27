@@ -111,7 +111,7 @@ function get_from_time(t, start_from)
 
 function help()
 {
-    console.log("Usage: sleep_til TIME[-TIME[-r] PROGRAM args1 ... argsN]");
+    console.log("Usage: sleep_til TIME[-TIME[-r] PROGRAM [ARGS1 ... ARGSn]]");
     console.log("");
     console.log("  TIME can be the following:");
     console.log("  A timestamp:");
@@ -242,13 +242,15 @@ function wait()
         if (!/--?help/.test(til)) {
             console.error("Invalid time");
         }
-        return help();
+        help();
+        process.exit(2);
     }
     
     console.log("Waiting for about " + human_readable_time(start) + ".");
     if (typeof stop === "number") {
         if (typeof process.argv[3] === "undefined") {
-            return console.error("ERROR: A range needs a program to execute.");
+            console.error("ERROR: A range needs a program to execute.");
+            process.exit(3);
         }
         console.log("Stopping about " + human_readable_time(stop) + " after that.");
         if (repeat_it) {
@@ -269,7 +271,7 @@ function wait()
 /// Prep
 if (!til) {
     console.error("Need a time.");
-    return help();
+    process.exit(1);
 }
 
 til = til.toLowerCase();
