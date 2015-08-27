@@ -97,7 +97,10 @@ function get_from_time(t, start_from)
             h += 12;
         }
         
-        dm = (new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, m, s, d.getMilliseconds())).valueOf();
+        ///NOTE: We subtract 1 millisecond so that specifying the current time will get tomorrow.
+        ///      E.g., if it's 8:30am and the value of t is "8:30am", instead of getting the current time and waiting for 0 ms, we get 24 hours later.
+        dm = (new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, m, s, d.getMilliseconds() - 1)).valueOf();
+        
         cm = d.valueOf();
         
         if (dm < cm) {
