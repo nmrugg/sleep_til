@@ -24,6 +24,6 @@
     "type": "git",
     "url": "http://github.com/nmrugg/sleep_til.git"
   },
-  "readmeFilename": "readme.md",
+  "readmeFilename": "readme",
   "dependencies": {}
 }
