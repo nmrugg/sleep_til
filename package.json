@@ -1,0 +1,29 @@
+{
+  "name": "sleep_til",
+  "description": "A better sleep",
+  "version": "1.0.0",
+  "author": {
+    "name": "Nathan Rugg",
+    "email": "nmrugg@gmail.com"
+  },
+  "keywords": [
+    "sleep",
+    "utility"
+  ],
+  "main": "sleep_til.js",
+  "bin": {
+    "sleep_til": "sleep_til.js"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://nate.mit-license.org/"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/nmrugg/sleep_til.git"
+  },
+  "readmeFilename": "readme.md",
+  "dependencies": {}
+}

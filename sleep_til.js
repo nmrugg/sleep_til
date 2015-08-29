@@ -123,6 +123,8 @@ function get_from_time(t, start_from)
 
 function help()
 {
+    console.log("sleep_til: A better sleep");
+    console.log("");
     console.log("Usage: sleep_til TIME[-TIME[-r] PROGRAM [ARGS1 ... ARGSn]]");
     console.log("");
     console.log("  TIME can be the following:");
