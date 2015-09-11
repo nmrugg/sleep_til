@@ -67,7 +67,16 @@ function run_program()
     {
         stopping = true;
         clearTimeout(retry_delay);
+        
         exec.kill(); /// SIGTERM is sent by default.
+        
+        /// Make sure it exsits.
+        setTimeout(function reallykill()
+        {
+            try {
+                exec.kill("SIGKILL");
+            } catch (e) {}
+        }, 900).unref();
         
         if (repeat_it) {
             reset();
