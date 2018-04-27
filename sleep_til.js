@@ -159,6 +159,8 @@ function help()
     console.log("  Here's an example to download a file over night and continue the next day if it does not finish:");
     console.log("    sleep_til 11:00PM-6:00AM-r wget -c http://example.com/largefile.zip");
     console.log("");
+    console.log("NOTE: Using the screen program may cause issues with long wait times. Instead, try using pm2 like this:");
+    console.log("      pm2 start `which sleep_til` -- TIME-TIME-r PROGRAM ARGS");
     console.log("NOTE: When using a timestamp, it will use the current time's second value if not specified.");
     console.log("NOTE: The maximum time to wait is about 24 days.");
 }
