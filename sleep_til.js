@@ -163,6 +163,7 @@ function help()
     console.log("      pm2 start `which sleep_til` -- TIME-TIME-r PROGRAM ARGS");
     console.log("NOTE: When using a timestamp, it will use the current time's second value if not specified.");
     console.log("NOTE: The maximum time to wait is about 24 days.");
+    console.log("");
 }
 
 function parse_time(til, start_from)
@@ -176,7 +177,7 @@ function parse_time(til, start_from)
         ms = parseFloat(til) * 60 * 60 * 1000;
     } else if (last === "m" && !/[pa]m$/i.test(til)) {
         ms = parseFloat(til) * 60 * 1000;
-    } else if (last === "s" && !/[pa]m$/i.test(til)) {
+    } else if (last === "s") {
         if (til.slice(-2, -1).toLowerCase() === "m") {
             ms = parseFloat(til);
         } else {
@@ -287,7 +288,7 @@ function wait()
 
 /// Prep
 if (!til) {
-    console.error("Need a time.");
+    help();
     process.exit(1);
 }
 
