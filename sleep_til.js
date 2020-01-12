@@ -79,7 +79,7 @@ function run_program()
 
 function get_from_time(t, start_from)
 {
-    var match = t.match(/^(\d+):(\d+)(?::(\d+))?(?:\s*(am|pm))?$/i);
+    var match = t.match(/^(\d+)(?::(\d+)(?::(\d+))?)?(?:\s*(am|pm))?$/i);
     var d, h, m, dm, cm;
     
     if (match) {
@@ -89,8 +89,8 @@ function get_from_time(t, start_from)
             d = new Date(start_from);
         }
         
-        h = parseInt(match[1], 10);
-        m = parseInt(match[2], 10);
+        h = parseInt(match[1], 10) || 0;
+        m = parseInt(match[2], 10) || 0;
         s = parseInt(match[3], 10);
         
         if (typeof s !== "number" || isNaN(s)) {
