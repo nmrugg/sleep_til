@@ -162,7 +162,7 @@ function help()
     console.log("NOTE: Using the screen program may cause issues with long wait times. Instead, try using pm2 like this:");
     console.log("      pm2 start `which sleep_til` -- TIME-TIME-r PROGRAM ARGS");
     console.log("NOTE: When using a timestamp, it will use the current time's second value if not specified.");
-    console.log("NOTE: The maximum time to wait is about 24 days.");
+    console.log("NOTE: There is no practical maximum wait time.");
     console.log("");
 }
 
@@ -245,16 +245,22 @@ function human_readable_time(t)
 
 function wait()
 {
-    get_times(til);
+    var startAt;
     
-    ///NOTE: 2147483648 will overflow and be the same as 0.
-    ///      2147483647 will not; however, doing any thing close to 2147483647 still make node use a significant amount of CPU for some mysterious reason.
-    if (start > 2147400000) {
-        return console.error("Too long, sorry.");
+    function waitUntil()
+    {
+        var timeLeft = startAt - Date.now();
+        
+        if (timeLeft <= 0) {
+            after_wait();
+        } else if (timeLeft <= 5000) {
+            setTimeout(after_wait, timeLeft);
+        } else {
+            setTimeout(waitUntil, 5000);
+        }
     }
-    if (typeof stop === "number" &&  stop > 2147400000) {
-        return console.error("End time too long, sorry.");
-    }
+    
+    get_times(til);
     
     if (isNaN(start)) {
         if (!/--?help/.test(til)) {
@@ -282,7 +288,12 @@ function wait()
         after_wait = run_program;
     }
     
-    setTimeout(after_wait, start);
+    if (start <= 5000) {
+        setTimeout(after_wait, start);
+    } else {
+        startAt = new Date(Date.now() + start).valueOf();
+        setTimeout(waitUntil, 5000);
+    }
 }
 
 
